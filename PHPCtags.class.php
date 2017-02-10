@@ -5,7 +5,7 @@ use PhpParser\Node\Expr;
 
 class PHPCtags
 {
-    const VERSION = '0.6.0';
+    const VERSION = '0.6.1';
 
     private $mFile;
 
@@ -529,7 +529,11 @@ class PHPCtagsException extends Exception {
 class ReadableRecursiveDirectoryIterator extends RecursiveDirectoryIterator {
     function getChildren() {
         try {
-            return new ReadableRecursiveDirectoryIterator($this->getPathname());
+          return new ReadableRecursiveDirectoryIterator(
+            $this->getPathname(),
+            FilesystemIterator::SKIP_DOTS |
+            FilesystemIterator::FOLLOW_SYMLINKS);
+
         } catch(UnexpectedValueException $e) {
             file_put_contents('php://stderr', "\nPHPPCtags: {$e->getMessage()} - {$this->getPathname()}\n");
             return new RecursiveArrayIterator(array());
